@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="icon" href="data:,">
+    <style>
+        table,
+        th,
+        td {
+            border: 1px solid white;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            background-color: #96D4D4;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="position: absolute; top: 20px; right: 50px;">
+        <input type="search" id="search">
+        <button id="searchButton">Search</button>
+    </div>
+
+
+    <table style="position: absolute; top: 60px; width:100%" id="myTable">
+        <tr>
+            <th>Time</th>
+            <th>Log Level</th>
+            <th>Log Value</th>
+        </tr>
+
+    </table>
+
+    <p id="paragraph" style="position: absolute; right:350px"></p>
+
+    <script>
+        window.onload = function () {
+            fetch("http://localhost/stringData").then(res => {
+
+                res.text().then(text => {
+                    let table = document.getElementById("myTable");
+                    table.insertAdjacentHTML("beforeend", text);
+                }).then(() => {
+                    let searchButton = document.getElementById("searchButton");
+                    let td = document.getElementById("myTable").getElementsByTagName("td");
+                    let paragraph = document.getElementById("paragraph");
+                    searchButton.onclick = function () {
+
+                        let searchText = document.getElementById("search").value;
+
+                        for (let i = 0; i < td.length; i++) {
+                            if (td[i].innerHTML.match(searchText)) {
+                                td[i].style.backgroundColor = "red";
+                            }else{
+                                paragraph.innerHTML = "No mathes found";
+                            }
+                        }
+                    }
+                    let inputField = document.getElementById("search");
+                    inputField.oninput = function(){
+                        for (let i = 0; i < td.length; i++) {
+                            td[i].style.backgroundColor = "#96D4D4";
+                        }
+                        paragraph.innerHTML = "";
+                    }
+                });
+            });
+
+        }
+    </script>
+</body>
+
+</html>
