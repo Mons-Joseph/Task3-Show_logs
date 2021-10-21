@@ -39,34 +39,55 @@
     <script>
         window.onload = function () {
             fetch("http://localhost/stringData").then(res => {
-
                 res.text().then(text => {
+                    // console.log("text recieved", text);
+                    let timeArray = text.match(/\d\d[:]\d\d[:]\d\d/g);
+                    let logLevelArray = text.match(/error|warn|info|verbose|debug|silly/g);
+                    let logValueArray = text.match(/(?<=\:\')(.*)(?=\')/g);
+                    let tableString = "";
+                    for (let i = 0; i < timeArray.length; i++) {
+                        tableString += "<tr>" + "<td>" + timeArray[i] + "</td>" + "<td>" + logLevelArray[i] + "</td>" + "<td>" + logValueArray[i] + "</td>" + "</tr>";
+                    }
                     let table = document.getElementById("myTable");
-                    table.insertAdjacentHTML("beforeend", text);
-                }).then(() => {
-                    let searchButton = document.getElementById("searchButton");
-                    let td = document.getElementById("myTable").getElementsByTagName("td");
-                    let paragraph = document.getElementById("paragraph");
-                    searchButton.onclick = function () {
+                    table.insertAdjacentHTML("beforeend", tableString);
 
-                        let searchText = document.getElementById("search").value;
-
-                        for (let i = 0; i < td.length; i++) {
-                            if (td[i].innerHTML.match(searchText)) {
-                                td[i].style.backgroundColor = "red";
-                            }else{
-                                paragraph.innerHTML = "No mathes found";
-                            }
-                        }
-                    }
-                    let inputField = document.getElementById("search");
-                    inputField.oninput = function(){
-                        for (let i = 0; i < td.length; i++) {
-                            td[i].style.backgroundColor = "#96D4D4";
-                        }
-                        paragraph.innerHTML = "";
-                    }
                 });
+
+                let td = document.getElementById("myTable").getElementsByTagName("td");
+                let inputField = document.getElementById("search");
+                let searchButton = document.getElementById("searchButton");
+                let paragraph = document.getElementById("paragraph");
+                searchButton.onclick = function () {
+
+                    let searchText = document.getElementById("search").value;
+                    let matchFound = false;
+                    let matchNumber = 0;
+                    for (let i = 0; i < td.length; i++) {
+                        if (td[i].innerHTML.match(searchText)) {
+                            td[i].style.backgroundColor = "red";
+                            matchFound = true;
+                            matchNumber++;
+                            paragraph.innerHTML = `${matchNumber} matches found`;
+
+                            console.log("mathch found in if", matchFound);
+                        }
+                    }
+                    if(matchFound === false){
+                            paragraph.innerHTML = "No mathes found";
+                            console.log("mathch found in if else", matchFound);
+                     }
+                    //  else if (matchFound === true){
+                    //     paragraph.innerHTML = "No mathes found";
+
+                    // }
+                }
+                inputField.oninput = function () {
+                    for (let i = 0; i < td.length; i++) {
+                        td[i].style.backgroundColor = "#96D4D4";
+                    }
+                    paragraph.innerHTML = "";
+                }
+
             });
 
         }
